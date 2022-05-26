@@ -1,7 +1,7 @@
 const express = require('express')
 const cors=require('cors')
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 4000
 app.use(cors());
@@ -22,6 +22,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
             const tools=await cursor.toArray();
             res.send(tools);
         })
+        app.get('/tools/:id',async(req,res)=>{
+            const id =req.params.id;
+            const query={_id:ObjectId(id)}
+            const result= await toolsCollection.findOne(query);
+            res.send(result);
+        });
 
      }
      finally{
