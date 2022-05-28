@@ -18,6 +18,7 @@ async function run() {
         const toolsCollection = client.db('car-engineer').collection('tools')
         const reviewCollection = client.db('car-engineer').collection('review')
         const orderCollection = client.db('car-engineer').collection('orders')
+        const userCollection = client.db('car-engineer').collection('user')
         app.get('/tools', async (req, res) => {
             const query = {};
             const cursor = toolsCollection.find(query);
@@ -113,6 +114,19 @@ async function run() {
             res.send(rev)
         })
     
+        app.put('/user/:email',async(req,res)=>{
+            const email=req.params.email;
+            const user=req.body;
+            const filter={email:email}
+            const options={upsert : true}
+            const updateDoc={
+                $set:user,
+                
+            }
+            const result = await userCollection.updateOne(filter,updateDoc,options);
+            res.send(result)
+
+        })
        
 
     }
