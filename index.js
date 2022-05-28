@@ -16,12 +16,18 @@ async function run() {
     try {
         await client.connect();
         const toolsCollection = client.db('car-engineer').collection('tools')
+        const reviewCollection = client.db('car-engineer').collection('review')
+        const orderCollection = client.db('car-engineer').collection('orders')
         app.get('/tools', async (req, res) => {
             const query = {};
             const cursor = toolsCollection.find(query);
             const tools = await cursor.toArray();
             res.send(tools);
         })
+
+      
+
+
         app.get('/tools/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -38,6 +44,62 @@ async function run() {
             const result = await toolsCollection.insertOne(tools);
             return res.send({ success: true, result });
         });
+       
+        app.post('/tools', async (req, res)=>{
+            const tools = req.body;
+            const query = {name: tools.name, description: tools.description, available: tools.available, minorder: tools.minorder, price: tools.price, img: tools.img};
+            const exist = await toolsCollection.findOne(query);
+            if(exist){
+                return res.send({ success: false, tools: exist })
+            }
+            const result = await toolsCollection.insertOne(tools);
+            return res.send({ success: true, result });
+        });
+
+        app.put('/tools/:id', async (req, res) => {
+            const id = req.params.id;
+            const requestedQuantity = req.body.quantity;
+      
+            const filter = { _id: ObjectId(id) };
+            const tool = await toolsCollection.findOne(filter);
+            const quantity = tool.available;
+            const newQuantity = quantity - requestedQuantity;
+      
+            const options = { upsert: true };
+            const updatedDoc = {
+              $set:
+              {
+                availableQuantity: newQuantity
+              },
+            };
+            const result = await toolsCollection.updateOne(filter, updatedDoc, options);
+      
+            res.send(result);
+          });
+         
+          app.post('/orders', async (req, res) => {
+            const order = req.body;
+            
+            const result = await orderCollection.insertOne(order);
+            return res.send({ success: true, result });
+          });
+          app.get('/orders', async (req,res)=>{
+            const email=req.query.email;
+           
+            
+            const query={email:email}
+            const orders= await orderCollection.find(query).toArray();
+            res.send(orders);
+        })
+          
+        
+        //   app.get('/orders', async (req, res) => {
+        //     const query = {};
+        //     const cursor = orderCollection.find(query);
+        //     const tools = await cursor.toArray();
+        //     res.send(tools);
+        // })
+       
 
     }
     finally {
