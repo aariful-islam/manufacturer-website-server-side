@@ -99,6 +99,20 @@ async function run() {
         //     const tools = await cursor.toArray();
         //     res.send(tools);
         // })
+
+        // review
+        app.post('/review', async(req,res)=>{
+            const rev=req.body;
+            const result = await reviewCollection.insertOne(rev);
+            res.send(result)
+        })
+        app.get('/review', async(req,res)=>{
+            const query={}
+            const cursor=reviewCollection.find(query);
+            const rev= await cursor.toArray();
+            res.send(rev)
+        })
+    
        
 
     }
