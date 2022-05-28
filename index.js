@@ -12,6 +12,7 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.rqdp4.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
 function verifyJWT(req,res,next){
     const authHeader =req.headers.authorization;
     if(!authHeader){
@@ -98,12 +99,21 @@ async function run() {
             const result = await orderCollection.insertOne(order);
             return res.send({ success: true, result });
           });
-          app.get('/orders', async (req,res)=>{
+          app.get('/orders', verifyJWT, async (req,res)=>{
             const email=req.query.email;
-          
-            const query={email:email}
-            const orders= await orderCollection.find(query).toArray();
+            const decodedEmail=req.decoded.email;
+           
+            if(email=== decodedEmail){
+                const query={email:email}
+                const orders= await orderCollection.find(query).toArray();
             res.send(orders);
+            }
+            else{
+                return res.status(403).send({message:"forbiddem"})
+            }
+          
+            
+            
         })
           
         
