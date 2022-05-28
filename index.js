@@ -34,6 +34,7 @@ async function run() {
         const reviewCollection = client.db('car-engineer').collection('review')
         const orderCollection = client.db('car-engineer').collection('orders')
         const userCollection = client.db('car-engineer').collection('user')
+        
         app.get('/tools', async (req, res) => {
             const query = {};
             const cursor = toolsCollection.find(query);
@@ -117,7 +118,12 @@ async function run() {
         })
 
 
-       
+        //   app.get('/orders', async (req, res) => {
+        //     const query = {};
+        //     const cursor = orderCollection.find(query);
+        //     const tools = await cursor.toArray();
+        //     res.send(tools);
+        // })
 
         // review
         app.post('/review', async (req, res) => {
@@ -135,10 +141,10 @@ async function run() {
             const users = await userCollection.find().toArray();
             res.send(users)
         })
-        app.get('/orders', async (req, res) => {
-            const users = await orderCollection.find().toArray();
-            res.send(users)
-        })
+        // app.get('/orders', async (req, res) => {
+        //     const users = await orderCollection.find().toArray();
+        //     res.send(users)
+        // })
 
         app.put('/user/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
@@ -187,7 +193,7 @@ async function run() {
             const user = await userCollection.findOne({ email: email });
             const isAdmin = user.role === 'admin';
             res.send({ admin: isAdmin })
-          })
+        })
 
 
 
