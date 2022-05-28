@@ -118,12 +118,14 @@ async function run() {
         })
 
 
-        //   app.get('/orders', async (req, res) => {
-        //     const query = {};
-        //     const cursor = orderCollection.find(query);
-        //     const tools = await cursor.toArray();
-        //     res.send(tools);
-        // })
+
+
+          app.get('/orders', async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const tools = await cursor.toArray();
+            res.send(tools);
+        })
 
         // review
         app.post('/review', async (req, res) => {
