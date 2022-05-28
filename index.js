@@ -153,6 +153,10 @@ async function run() {
            
 
         })
+        app.get('/user', async(req,res)=>{
+            const users=await userCollection.find().toArray();
+            res.send(users)
+        })
        
 
     }
